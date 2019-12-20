@@ -46,26 +46,31 @@
   };
 </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Rae Zhang">
-<meta property="og:url" content="https:&#x2F;&#x2F;github.com&#x2F;RaeZhang0822&#x2F;RaeZhang0822.github.io&#x2F;index.html">
+  <meta name="description" content="Unable to preventDefault inside passive event listener 浏览器报错：  即  Unable to preventDefault inside passive event listener due to target being treated as passive. See https:&#x2F;&#x2F;www.chromestatus.com&#x2F;featur">
+<meta property="og:type" content="article">
+<meta property="og:title" content="preventDefault() 与 touch-action">
+<meta property="og:url" content="https:&#x2F;&#x2F;github.com&#x2F;RaeZhang0822&#x2F;RaeZhang0822.github.io&#x2F;2019&#x2F;12&#x2F;20&#x2F;%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8A%A5%E9%94%99%E4%B8%8Etouch-action&#x2F;index.html">
 <meta property="og:site_name" content="Rae Zhang">
+<meta property="og:description" content="Unable to preventDefault inside passive event listener 浏览器报错：  即  Unable to preventDefault inside passive event listener due to target being treated as passive. See https:&#x2F;&#x2F;www.chromestatus.com&#x2F;featur">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;img-blog.csdnimg.cn&#x2F;20191220070923676.png?x-oss-process=image&#x2F;watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1JhZVpoYW5n,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2019-12-20T05:28:42.329Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;img-blog.csdnimg.cn&#x2F;20191220070923676.png?x-oss-process=image&#x2F;watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1JhZVpoYW5n,size_16,color_FFFFFF,t_70">
 
-<link rel="canonical" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/">
+<link rel="canonical" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/2019/12/20/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8A%A5%E9%94%99%E4%B8%8Etouch-action/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome: true,
-    isPost: false
+    isHome: false,
+    isPost: true
   };
 </script>
 
-  <title>Rae Zhang</title>
+  <title>preventDefault() 与 touch-action | Rae Zhang</title>
   
 
 
@@ -160,10 +165,10 @@
             
 
   <div class="posts-expand">
-        
+      
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/2019/12/20/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8A%A5%E9%94%99%E4%B8%8Etouch-action/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -177,8 +182,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/12/20/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8A%A5%E9%94%99%E4%B8%8Etouch-action/" class="post-title-link" itemprop="url">preventDefault() 与 touch-action</a>
+          preventDefault() 与 touch-action
         </h1>
 
         <div class="post-meta">
@@ -203,7 +207,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1>Unable to preventDefault inside passive event listener</h1>
+        <h1>Unable to preventDefault inside passive event listener</h1>
 <p>浏览器报错：<br>
 <img src="https://img-blog.csdnimg.cn/20191220070923676.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1JhZVpoYW5n,size_16,color_FFFFFF,t_70" alt=""><br>
 即</p>
@@ -244,24 +248,26 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'touchmove'</span>, func, &#123; <span class="attr">passive</span>: <span class="literal">false</span> &#125;)</span><br></pre></td></tr></table></figure>
 <p>BTW，由于报错是由第三方库引发，修改第三方库的js源码过于繁琐，直接升级了第三方库解决了这个问题🐶。</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
+
+        
+
+
+        
       </footer>
+    
   </article>
   
   
   
 
   </div>
-
-  
-
 
 
           </div>
@@ -312,6 +318,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">1.</span> <span class="nav-text">Unable to preventDefault inside passive event listener</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">2.</span> <span class="nav-text">关于touch-action</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

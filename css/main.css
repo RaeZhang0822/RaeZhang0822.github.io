@@ -1159,7 +1159,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #30f982;
+  background: #ffbf82;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2275,3 +2275,4 @@ embed {
   transition: all 0.4s;
   width: 320px;
 }
+/* emoji */
