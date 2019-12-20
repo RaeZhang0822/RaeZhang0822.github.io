@@ -164,7 +164,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/2019/12/20/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8A%A5%E9%94%99%E4%B8%8Etouch-action/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/2019/12/20/preventDefault%E4%B8%8Etouch-action/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -178,7 +178,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/12/20/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8A%A5%E9%94%99%E4%B8%8Etouch-action/" class="post-title-link" itemprop="url">preventDefault() 与 touch-action</a>
+            <a href="/2019/12/20/preventDefault%E4%B8%8Etouch-action/" class="post-title-link" itemprop="url">preventDefault() 与 touch-action</a>
         </h1>
 
         <div class="post-meta">
@@ -189,7 +189,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2019-12-20 10:21:16 / 修改时间：13:28:42" itemprop="dateCreated datePublished" datetime="2019-12-20T10:21:16+08:00">2019-12-20</time>
+              <time title="创建时间：2019-12-20 10:21:16 / 修改时间：13:43:57" itemprop="dateCreated datePublished" datetime="2019-12-20T10:21:16+08:00">2019-12-20</time>
             </span>
 
           
@@ -236,7 +236,8 @@
 <p>更详细的<code>touch-action</code>说明请看<a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/touch-action" target="_blank" rel="noopener"> 这里 </a>。</p>
 <p>需要注意避免的坑是 <code>touch-action</code> 在<strong>移动端</strong>的问题:</p>
 <ol>
-<li>iOS 移动端不支持该属性。</li>
+<li>iOS 移动端不支持该属性。兼容性见下图：<br>
+<img src="https://img-blog.csdnimg.cn/20191220134018688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1JhZVpoYW5n,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
 <li>在安卓手机中如果为了避免chrome报错而在全局设置<code>touch-action:none</code>属性，会禁止掉所有的触摸操作行为，导致页面不能滑动。</li>
 </ol>
 <p>基于以上两个原因，即使谷歌官方推荐使用<code>touch-action:none</code>来处理这个报错，最终解决方案还是选择用js在注册事件处理函数时传入<code>{passive:false}</code>。<br>
