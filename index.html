@@ -219,7 +219,9 @@
 <p>Dog 能够摇尾巴</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Dog wagTail := method( &quot;Dog is wagging his tail&quot; print );</span><br></pre></td></tr></table></figure>
 <p>以此类推，我们可以创建出更多的对象。在以上举出的例子中存在这样的原型链:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">A((Dog)) --&gt; B((Animal)) </span><br><span class="line">B((Animal))  --&gt; C((Object))</span><br></pre></td></tr></table></figure>
+<pre class="mermaid">graph LR
+A((Dog)) --> B((Animal)) 
+B((Animal))  --> C((Object))</pre>
 <h1>原型编程范型的一些规则</h1>
 <p>Dog对象没有makeSound方法，于是把请求委托给了他的原型Animal, 而Animal对象是有makeSound方法的，所以执行<code>Dog makeSound</code> 可以顺利输出 <code>animal makeSound</code>.<br>
 这个机制很简单，但功能却很强大，Java Script和Io一样，<strong>基于原型链的委托机制就是原型继承的本质</strong>。<br>
@@ -257,7 +259,9 @@ JS中的每一个对象都是从 <em>Object.prototype</em> 对象克隆而来。
 JS给对象提供了一个名为 “<strong>proto</strong>” 的隐藏属性指向它的构造器的原型对象，即 {Constructor}.prototype。</p>
 <h2 id="4-如果对象无法响应某个请求，它会把这个请求委托给自己的原型">4. 如果对象无法响应某个请求，它会把这个请求委托给自己的原型</h2>
 <p>在之前Io语言的举例中，因为每个Io对象都可以作为原型被克隆，所以存在一条天然的原型链：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">A((Dog)) --&gt; B((Animal)) </span><br><span class="line">B((Animal))  --&gt; C((Object))</span><br></pre></td></tr></table></figure>
+<pre class="mermaid">graph LR
+A((Dog)) --> B((Animal)) 
+B((Animal))  --> C((Object))</pre>
 <p>而在JS中，每个对象都是从 <em>Object.prototype</em> 对象克隆而来。如果这样的话，我们只能得到非常单一的继承关系，即每个对象都继承自 <em>Object.prototype</em> 对象，这样的对象系统十分受限。</p>
 <p>实际上，虽然JS的对象最初都是 <em>Object.prototype</em>  对象克隆而来的，但对象构造器的原型并不仅限于Object.prototype上，而是可以动态指向其他对象。比如， 当对象a要借用对象b的方法时，可以有选择性地将对象a的构造器的原型指向b，从而达到继承的效果。</p>
 <p>常见的原型继承方式：</p>
@@ -866,6 +870,19 @@ js中class并不直接支持多继承。<br>
 
 
 
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
 
 
   
