@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://github.com/RaeZhang0822/RaeZhang0822.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="定义 发布-订阅模式又叫观察者模式，它定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知。    DOM事件 实际上，如果你曾在DOM节点上绑定过事件，就曾经使用过发 发布–订阅 模式。 1234567document.body.addEventListener(  &amp;apos;click&amp;apos;,  function() &amp;#123;    alert(2);  &amp;#1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript设计模式（六）—— 发布-订阅模式">
+<meta property="og:url" content="https:&#x2F;&#x2F;github.com&#x2F;RaeZhang0822&#x2F;RaeZhang0822.github.io&#x2F;2020&#x2F;08&#x2F;28&#x2F;Javascript%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AD%EF%BC%89%E2%80%94%E2%80%94%20%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F&#x2F;index.html">
+<meta property="og:site_name" content="Rae Zhang">
+<meta property="og:description" content="定义 发布-订阅模式又叫观察者模式，它定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知。    DOM事件 实际上，如果你曾在DOM节点上绑定过事件，就曾经使用过发 发布–订阅 模式。 1234567document.body.addEventListener(  &amp;apos;click&amp;apos;,  function() &amp;#123;    alert(2);  &amp;#1">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-28T02:27:16.904Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/2020/08/28/Javascript%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AD%EF%BC%89%E2%80%94%E2%80%94%20%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Javascript设计模式（六）—— 发布-订阅模式 | Rae Zhang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rae Zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/RaeZhang0822/RaeZhang0822.github.io/2020/08/28/Javascript%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AD%EF%BC%89%E2%80%94%E2%80%94%20%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rae Zhang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rae Zhang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Javascript设计模式（六）—— 发布-订阅模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-28 10:26:14 / 修改时间：10:27:16" itemprop="dateCreated datePublished" datetime="2020-08-28T10:26:14+08:00">2020-08-28</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1>定义</h1>
+<pre><code>发布-订阅模式又叫观察者模式，它定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知。  
+</code></pre>
+<h1>DOM事件</h1>
+<p>实际上，如果你曾在DOM节点上绑定过事件，就曾经使用过发 <strong>发布–订阅</strong> 模式。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.body.addEventListener(</span><br><span class="line">  <span class="string">'click'</span>,</span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="number">2</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="literal">false</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>这里需要监听<strong>document.body</strong>的<em>click</em>动作，所以我们订阅了<strong>document.body</strong>的click事件，当<strong>body</strong>节点被点击时，<strong>body</strong>节点便会向订阅者发布这个消息。</p>
+<h1>自定义事件</h1>
+<p>实现发布-订阅模式的步骤：</p>
+<ol>
+<li>指定谁是发布者</li>
+<li>给发布者添加一个缓存你列表，用于存放回调函数以便通知订阅者</li>
+<li>最后发布消息的时候，发布者会遍历这个缓存列表，依次触发里面存放的订阅者回调函数。</li>
+</ol>
+<p>举个🌰</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">var</span> calcuator = &#123;&#125;; <span class="comment">//定义发布者</span></span><br><span class="line"></span><br><span class="line">calcuator.clientList = []; <span class="comment">//缓存列表，存放订阅者的回调函数</span></span><br><span class="line"></span><br><span class="line">calcuator.listen = <span class="function"><span class="keyword">function</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//增加订阅者</span></span><br><span class="line">  <span class="keyword">this</span>.clientList.push(fn); <span class="comment">//订阅的消息添加进缓存列表</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">calcuator.trigger = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">//发布消息</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, fn; (fn = <span class="keyword">this</span>.clientList[i ++ ]);) &#123;</span><br><span class="line">    fn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>); <span class="comment">// arguments 是发布消息时带上的参数</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>下面进行一些简单的测试：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//订阅 add</span></span><br><span class="line">calculator.listen(<span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'add'</span>,num1+num2);        </span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//订阅 minus</span></span><br><span class="line">calculator.listen(<span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'minus'</span>,num1-num2);    <span class="comment">//订阅 minus</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//订阅 multiply</span></span><br><span class="line">calculator.listen(<span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'multiply'</span>,num1*num2);     </span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//订阅 divide</span></span><br><span class="line">calculator.listen(<span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'divide'</span>,num1/num2);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">calculator.trigger(<span class="number">30</span>,<span class="number">5</span>);</span><br><span class="line"><span class="comment">//结果</span></span><br><span class="line"><span class="comment">// add 35</span></span><br><span class="line"><span class="comment">// minus 25</span></span><br><span class="line"><span class="comment">// mulriply 150</span></span><br><span class="line"><span class="comment">// divide 6</span></span><br></pre></td></tr></table></figure>
+<p>这样我们完成了一个最简单的发布-订阅模式，但现在还存在一些问题。<strong>trigger</strong>一次就进行了所有的加减乘除运算，如果我们想<strong>trigger</strong>特定的某一个事件就无法做到。所以我们有必要添加一个标示key,让订阅者只订阅自己感兴趣的消息。修改后的代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line"><span class="keyword">var</span> calculator = &#123;&#125;; <span class="comment">//定义发布者</span></span><br><span class="line"></span><br><span class="line">calculator.clientList = &#123;&#125;; <span class="comment">//缓存列表，存放订阅者的回调函数</span></span><br><span class="line"></span><br><span class="line">calculator.listen = <span class="function"><span class="keyword">function</span>(<span class="params">key, fn</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="keyword">this</span>.clientList[key]) &#123;</span><br><span class="line">    <span class="keyword">this</span>.clientList[key] = []; <span class="comment">//如果还没有订阅过此类消息，给该消息创建一个缓存列表</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//增加订阅者</span></span><br><span class="line">  <span class="keyword">this</span>.clientList[key].push(fn); <span class="comment">//订阅的消息添加进缓存列表</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">calculator.trigger = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> key = <span class="built_in">Array</span>.prototype.shift.call(<span class="built_in">arguments</span>), <span class="comment">//取出消息类型</span></span><br><span class="line">    fns = <span class="keyword">this</span>.clientList[key]; <span class="comment">//取出对应的回调函数集</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!fns || fns.length === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">//没有该订阅消息则返回</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'no fns'</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, fn; (fn = fns[i++]); ) &#123;</span><br><span class="line">    fn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>); <span class="comment">// arguments 是发布消息时带上的参数</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'add'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'add'</span>, num1 + num2);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'minus'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'minus'</span>, num1 - num2);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'multiply'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'multiply'</span>, num1 * num2);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'divide'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'divide'</span>, num1 / num2);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">calculator.trigger(<span class="string">'add'</span>, <span class="number">30</span>, <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+<p>这样，就可以只<strong>trigger</strong>自己感兴趣的事件了。</p>
+<h1>发布-订阅模式的通用实现</h1>
+<p>把发布-订阅的功能提取出来，放在一个单独的对象里：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> event = &#123;</span><br><span class="line">  clientList: &#123;&#125;,</span><br><span class="line">  listen: <span class="function"><span class="keyword">function</span>(<span class="params">key, fn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.client[key]) &#123;</span><br><span class="line">      <span class="keyword">this</span>.clientList[key] = [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.clientList[key].push(fn);</span><br><span class="line">  &#125;,</span><br><span class="line">  trigger: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> key = <span class="built_in">Array</span>.prototype.shift.call(<span class="built_in">arguments</span>),</span><br><span class="line">      fns = <span class="keyword">this</span>.clientList[key];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!fns || fns.length === <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, fn; (fn = fns[i++]);) &#123;</span><br><span class="line">      fn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>再定义一个<strong>installEvent</strong>函数，这个函数可以给所有对象都动态安装发布订阅功能：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> installEvent = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> event) &#123;</span><br><span class="line">    obj[i] = event[i];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>再来测试一下，给 <strong>calculator</strong> 动态增加发布-订阅功能：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> calculator = &#123;&#125;;</span><br><span class="line">installEvent(calculator);</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'add'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'add'</span>, num1+num2)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'minus'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'minus'</span>, num1-num2)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">calculator.trigger(<span class="string">'add'</span>,<span class="number">1</span>,<span class="number">2</span>); <span class="comment">//add 3</span></span><br><span class="line">calculator.trigger(<span class="string">'minus'</span>,<span class="number">1</span>,<span class="number">2</span>); <span class="comment">//minus -1</span></span><br></pre></td></tr></table></figure>
+<p>我们还可以实现取消订阅的事件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">event.remove = <span class="function"><span class="keyword">function</span>(<span class="params">key, fn</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> key = <span class="built_in">Array</span>.prototype.shift.call(<span class="built_in">arguments</span>),</span><br><span class="line">    fns = <span class="keyword">this</span>.clientList[key];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!fns || fns.length === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!fn) &#123;</span><br><span class="line">    fns &amp;&amp; (fns.length = <span class="number">0</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> l = fns.length - <span class="number">1</span>; l &gt;= <span class="number">0</span>; l--) &#123;</span><br><span class="line">      <span class="keyword">let</span> _fn = fns[l];</span><br><span class="line">      <span class="keyword">if</span> (_fn === fn) &#123;</span><br><span class="line">        fns.splice(l, <span class="number">1</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> installEvent = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> event)&#123;</span><br><span class="line">    obj[i]=event[i];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> calculator = &#123;&#125;;</span><br><span class="line">installEvent(calculator);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fn1 = <span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'fn1'</span>, num1+num2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fn2 = <span class="function"><span class="keyword">function</span>(<span class="params">num1,num2</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'fn2'</span>, num1+num2+num2)</span><br><span class="line">&#125;</span><br><span class="line">calculator.listen(<span class="string">'add'</span>,fn1)</span><br><span class="line"></span><br><span class="line">calculator.listen(<span class="string">'add'</span>,fn2)</span><br><span class="line"></span><br><span class="line">calculator.remove(<span class="string">'add'</span>,fn1);</span><br><span class="line">calculator.trigger(<span class="string">'add'</span>,<span class="number">1</span>,<span class="number">2</span>); <span class="comment">// fn2 5</span></span><br></pre></td></tr></table></figure>
+<h1>全局的发布-订阅对象</h1>
+<p>以上实现的发布-订阅模式还存在两个小问题：</p>
+<ol>
+<li>需要给每个发布者都添加<strong>listen</strong>、<strong>trigger</strong>方法和<strong>clientList</strong>列表，这其实是一种资源浪费。</li>
+<li>必须知道发布者的名字是<strong>calculator</strong> ,才能顺利订阅到事件。</li>
+</ol>
+<p>所以在程序中，发布-订阅模式可以用一个全局的<strong>event</strong>对象来实现，订阅者不需要了解消息来自哪个发布者，发布者也不知道消息会推送给哪些订阅者，<strong>Event</strong>作为一个类似“中介者”的角色，把订阅者和发布者联系起来。</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> Event = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> clientList = &#123;&#125;,</span><br><span class="line">    listen,</span><br><span class="line">    trigger,</span><br><span class="line">    remove,</span><br><span class="line">    listen = <span class="function"><span class="keyword">function</span>(<span class="params">key, fn</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="keyword">this</span>.clientList[key]) &#123;</span><br><span class="line">        <span class="keyword">this</span>.clientList[key] = [];</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">this</span>.clientList[key].push(fn);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">  trigger = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> key = <span class="built_in">Array</span>.prototype.shift.call(<span class="built_in">arguments</span>),</span><br><span class="line">      fns = <span class="keyword">this</span>.clientList[key];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!fns || fns.length === <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, fn; (fn = fns[i++]); ) &#123;</span><br><span class="line">      fn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  remove = <span class="function"><span class="keyword">function</span>(<span class="params">key, fn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> key = <span class="built_in">Array</span>.prototype.shift.call(<span class="built_in">arguments</span>),</span><br><span class="line">      fns = <span class="keyword">this</span>.clientList[key];</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'fns'</span>, fns);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!fns || fns.length === <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!fn) &#123;</span><br><span class="line">      fns &amp;&amp; (fns.length = <span class="number">0</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> l = fns.length - <span class="number">1</span>; l &gt;= <span class="number">0</span>; l--) &#123;</span><br><span class="line">        <span class="keyword">let</span> _fn = fns[l];</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'_fn'</span>, l, _fn);</span><br><span class="line">        <span class="keyword">if</span> (_fn === fn) &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">'slice'</span>);</span><br><span class="line">          fns.splice(l, <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      listen,</span><br><span class="line">      trigger,</span><br><span class="line">      remove,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="comment">//订阅</span></span><br><span class="line">Event.listen(<span class="string">'add'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'add'</span>, num1 + num2);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//发布</span></span><br><span class="line">Event.trigger(<span class="string">'add'</span>,<span class="number">1</span>,<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<h1>模块间通信</h1>
+<p>基于全局的<strong>Event</strong>对象，可以实现在两个封装良好的模块中进行通信，这两个模块可以完全不知道对方的存在。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"count"</span>&gt;</span>click<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"show"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/Javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript"><span class="comment">//每次点击a模块里的按钮之后，</span></span></span><br><span class="line"><span class="actionscript"><span class="comment">//b模块里的div会显示按钮的总点击次数</span></span></span><br><span class="line"><span class="javascript"><span class="keyword">let</span> a = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> count = <span class="number">0</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> button = <span class="built_in">document</span>.getElementById(<span class="string">'count'</span>);</span></span><br><span class="line"><span class="actionscript">  button.onclick = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">    Event.trigger(<span class="string">'add'</span>, count++);</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="keyword">let</span> b = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> div = <span class="built_in">document</span>.getElementById(<span class="string">'show'</span>);</span></span><br><span class="line"><span class="actionscript">  Event.listen(<span class="string">'add'</span>,  <span class="function"><span class="keyword">function</span><span class="params">(count)</span>  </span>&#123;</span></span><br><span class="line">    div.innerHTML = count; </span><br><span class="line">&#125;)();</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1>小结</h1>
+<h2 id="优点">优点</h2>
+<p>1.发布-订阅模式广泛应用于异步编程中，这是一种替代传递回调函数的方案。使用这一模式，我们无需过多关注对象在异步运行期间的内部状态，而只需啊哟订阅感兴趣的事件发生点。<br>
+2.这一模式可以取代对象见硬编码的通知机制，一个对象不用再显示地调用另外一个对象的某个接口。发布-订阅模式让两个对象松耦合地联系在一起。</p>
+<p>发布-订阅模式在实际开发中非常有用，vue的双向数据绑定，EventBus等技术都都是这一开发模式的典型应用。它还可以用来帮助实现一些别的设计模式，如中介者模式。</p>
+<h2 id="缺点">缺点</h2>
+<p>发布-订阅模式的缺点是要消耗一定的时间和内存。一旦订阅一个消息后，也许此消息最后都未发生，但订阅者会始终存在于内存中。</p>
+<p>另外，这一模式弱化了对象之间但故耐心，如果过度使用，对象与对象之间的必要联系会不明晰，导致程序难以跟踪维护和理解。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/28/Javascript%E4%B8%AD%E7%9A%84Number%E7%B1%BB%E5%9E%8B%E5%92%8CBigInt%E7%B1%BB%E5%9E%8B/" rel="prev" title="Javascript中的Number类型和BigInt类型">
+      <i class="fa fa-chevron-left"></i> Javascript中的Number类型和BigInt类型
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">2.</span> <span class="nav-text">DOM事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">3.</span> <span class="nav-text">自定义事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">4.</span> <span class="nav-text">发布-订阅模式的通用实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">5.</span> <span class="nav-text">全局的发布-订阅对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">6.</span> <span class="nav-text">模块间通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">7.</span> <span class="nav-text">小结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优点"><span class="nav-number">7.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺点"><span class="nav-number">7.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rae Zhang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rae Zhang</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
