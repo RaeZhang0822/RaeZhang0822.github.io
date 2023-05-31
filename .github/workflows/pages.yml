@@ -25,9 +25,10 @@ jobs:
             ${{ runner.OS }}-npm-cache
       - name: Install Dependencies
         run: npm install
-      - uses: webfactory/ssh-agent@v0.7.0
+      - name: Give GitHub Actions access to hexo theme repo
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SECRET_REPO_DEPLOY_KEY }}
       - name: Install Theme
         run: git clone git@github.com:klugjo/hexo-theme-clean-blog.git themes/clean-blog
       - name: Build
