@@ -106,8 +106,8 @@ push 之后触发重新构建报错
 
 修改完之后重试，即可看到 CI 成功，页面成功部署。
 
-# 参考资料
+## 参考资料
 
-[官方文档](https://hexo.io/zh-cn/docs/)
+[Hexo 官方文档](https://hexo.io/zh-cn/docs/)
 [在 GitHub Pages 上部署 Hexo](https://hexo.io/zh-cn/docs/github-pages.html)
 [GitHub Actions can't access private repos? Here's how to fix it](https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-actions/)
