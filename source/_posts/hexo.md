@@ -106,6 +106,8 @@ push 之后触发重新构建报错
 
 修改完之后重试，即可看到 CI 成功，页面成功部署。
 
+顺便说明，这种问题只有在使用 `git pull`方式安装主题时会出现，如果使用 `npm install` 安装主题，则不会出现上面的问题。支持`npm install` 这种方式安装的主题有限，我最后选择了 [Next](https://github.com/next-theme/hexo-theme-next), 简单快捷。
+
 ## 参考资料
 
 [Hexo 官方文档](https://hexo.io/zh-cn/docs/)
