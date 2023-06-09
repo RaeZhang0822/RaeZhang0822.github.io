@@ -78,16 +78,16 @@ push 之后触发重新构建报错
 
 #### 解决过程
 
-1. 在终端执行
+1. 生成新的 ssh-keys
+   ![deployKeys](./img/hexo/sshKeyGen.png)
 
-```shell
-ssh-keygen -t rsa -b 4096
-```
+2. 将公钥添加到 Deploy Keys
+   ![deployKeys](./img/hexo/deployKeys.png)
 
-2. 将生成的新的 私钥 添加到 username.github.io 仓库的 密钥中
+3. 将 私钥 添加到 username.github.io 仓库的 密钥中
    ![deployKeys](./img/hexo/secretKey.png)
 
-3. 在 workflow 中添加授权
+4. 在 workflow 中添加授权
 
 ```yml
 - name: Install Dependencies
