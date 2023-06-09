@@ -15,10 +15,10 @@
     
         <meta name="description" content="Quick Start这篇博客主要内容
 
-使用 Hexo（无主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署
+使用 Hexo（默认主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署
 使用主题后自动部署出错及修复的过程
 
-Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使用 GitHub Actions 部"/>
+Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使用 GitHub Actions "/>
     
 
     <!--Author-->
@@ -35,10 +35,10 @@ Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使
     
         <meta property="og:description" content="Quick Start这篇博客主要内容
 
-使用 Hexo（无主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署
+使用 Hexo（默认主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署
 使用主题后自动部署出错及修复的过程
 
-Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使用 GitHub Actions 部"/>
+Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使用 GitHub Actions "/>
     
 
     <!--Open Graph Site Name-->
@@ -183,7 +183,7 @@ Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使
                         <!-- Date and Author -->
                         
                         
-                            2023-06-07
+                            2023-06-09
                         
                     </span>
                 </div>
@@ -207,20 +207,44 @@ Hexo 基本使用和自动部署过程hexo 的基本使用参考 官方文档使
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><p>这篇博客主要内容</p>
 <ol>
-<li>使用 Hexo（无主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署</li>
+<li>使用 Hexo（默认主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署</li>
 <li>使用主题后自动部署出错及修复的过程</li>
 </ol>
 <h2 id="Hexo-基本使用和自动部署过程"><a href="#Hexo-基本使用和自动部署过程" class="headerlink" title="Hexo 基本使用和自动部署过程"></a>Hexo 基本使用和自动部署过程</h2><p>hexo 的基本使用参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">官方文档</a><br>使用 GitHub Actions 部署至 GitHub Pages 参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a></p>
-<p>按照上述两个官方文档，可以顺利将默认主题的 Hexo 部署到 GitHub pages.<br>说明下，这种方式只用了一个 <code>username.github.io</code>仓库，main 分支上是 hexo 的源代码，gh-pages 分支上是 hexo 编译后的文件。<br>配置的 workflow 可以实现当 main 分支上有 push 时，重新执行 build 命令,将 public 文件下的内容创建一次 commit 然后 push 到 gh-pages 分支。<br><img src="/./img/hexo/branches.png" alt="image"><br>自动部署的任务可以在仓库的 <strong>_Action _</strong> 下看到<br><img src="/./img/hexo/branches.png" alt="image"></p>
-<h2 id="Hexo-使用主题后自动部署失败踩坑记录"><a href="#Hexo-使用主题后自动部署失败踩坑记录" class="headerlink" title="Hexo 使用主题后自动部署失败踩坑记录"></a>Hexo 使用主题后自动部署失败踩坑记录</h2><h3 id="Hexo-主题使用方法"><a href="#Hexo-主题使用方法" class="headerlink" title="Hexo 主题使用方法"></a>Hexo 主题使用方法</h3><h4 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h4><p>以 <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog.git">clean-blog 主题</a> 为例子<br>在项目根目录下执行</p>
+<p>按照上述两个官方文档，可以顺利将默认主题的 Hexo 部署到 GitHub pages.<br>说明下，这种方式只用了一个 <code>username.github.io</code>仓库，main 分支上是 hexo 的源代码，gh-pages 分支上是 hexo 生成的文件。<br>配置的 workflow 可以实现:当 main 分支上有 push 时，重新执行 build 命令,将 public 文件下的内容创建一次 commit 然后 push 到 gh-pages 分支。<br><img src="/./img/hexo/branches.png" alt="image"></p>
+<h2 id="Hexo-使用主题后自动部署失败踩坑记录"><a href="#Hexo-使用主题后自动部署失败踩坑记录" class="headerlink" title="Hexo 使用主题后自动部署失败踩坑记录"></a>Hexo 使用主题后自动部署失败踩坑记录</h2><h3 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h3><h4 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h4><p>以 <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog.git">clean-blog 主题</a> 为例子<br>在项目根目录下执行</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="attr">https</span>:<span class="comment">//github.com/klugjo/hexo-theme-clean-blog.git themes/clean-blog</span></span><br></pre></td></tr></table></figure>
 
 <p>将主题仓库 clone 到 themes 文件夹下</p>
 <h4 id="设置主题"><a href="#设置主题" class="headerlink" title="设置主题"></a>设置主题</h4><p>在根目录下的<code>_config.yml</code> 文件中设置</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme</span>: ”clean-blog“; <span class="comment">// 注意与themes文件夹下的主题文件夹同名</span></span><br></pre></td></tr></table></figure>
 
-<p>可以在本地预览一下是没有问题的，但是当我把这一个主题改动 push 到 main 分支后，站点页面空白了，查看 gh-pages 分支发现文件数量明显少了很多，查看 Actions 下的 workflow 记录，发现在执行 Build 任务时有错误</p>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/368407566">静态博客框架 jekyll、hexo 和 hugo 三者之间的区别与差异</a><br><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">官方文档</a><br><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a></p>
+<h4 id="部署出错"><a href="#部署出错" class="headerlink" title="部署出错"></a>部署出错</h4><p>可以在本地预览一下是没有问题的，但是当我把这一个主题改动 push 到 main 分支后，站点页面空白了，查看 gh-pages 分支发现文件数量明显少了很多，想了一下应该是主题作为子仓库在云端时没有拉到相应的 github 仓库的代码，导致无法找到主题文件。</p>
+<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>既然是没有主题文件，我尝试修改 workflow, 在 build 前拉取主题文件仓库</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Dependencies</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">  <span class="comment"># 安装主题文件</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Theme</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">git@github.com:klugjo/hexo-theme-clean-blog.git</span> <span class="string">themes/clean-blog</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">peaceiris/actions-gh-pages@v3</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">github_token:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">    <span class="attr">publish_dir:</span> <span class="string">./public</span></span><br></pre></td></tr></table></figure>
+
+<p>push 之后触发重新构建报错<br><img src="/./img/hexo/error.png" alt="image"></p>
+<h4 id="错误原因"><a href="#错误原因" class="headerlink" title="错误原因"></a>错误原因</h4><blockquote>
+<p>这是因为你的开发机器上的用户通常与特定的 GitHub 帐户关联，并且该帐户具有对私有仓库的访问权限，而 GitHub Actions 用户只能看到它所附属的仓库。</p>
+</blockquote>
+<blockquote>
+<p>如今，与 GitHub 进行身份验证的最佳方式是使用部署密钥（Deploy Keys）。这是一组 SSH 密钥，可以为用户提供对特定仓库的只读访问权限（默认情况下）。</p>
+</blockquote>
+<p>所以需要重新生成一组 SSH 密钥。</p>
+<h4 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h4><ol>
+<li><p>生成新的 ssh-keys<br><img src="/./img/hexo/sshKeyGen.png" alt="deployKeys"></p>
+</li>
+<li><p>将公钥添加到 Deploy Keys<br><img src="/./img/hexo/deployKeys.png" alt="deployKeys"></p>
+</li>
+<li><p>将 私钥 添加到 username.github.io 仓库的 密钥中<br><img src="/./img/hexo/secretKey.png" alt="deployKeys"></p>
+</li>
+<li><p>在 workflow 中添加授权</p>
+</li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Dependencies</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"><span class="comment">#   授权</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Give</span> <span class="string">GitHub</span> <span class="string">Actions</span> <span class="string">access</span> <span class="string">to</span> <span class="string">hexo</span> <span class="string">theme</span> <span class="string">repo</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">webfactory/ssh-agent@v0.7.0</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">ssh-private-key:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.SECRET_REPO_DEPLOY_KEY</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="comment"># 安装主题</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Theme</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">git@github.com:klugjo/hexo-theme-clean-blog.git</span> <span class="string">themes/clean-blog</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br></pre></td></tr></table></figure>
+
+<p>修改完之后重试，即可看到 CI 成功，页面成功部署。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">官方文档</a><br><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a><br><a target="_blank" rel="noopener" href="https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-actions/">GitHub Actions can’t access private repos? Here’s how to fix it</a></p>
 
 
                 
