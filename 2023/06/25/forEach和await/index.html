@@ -19,23 +19,31 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"raezhang0822.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"style":null,"show_result":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Welcome">
-<meta property="og:url" content="https://raezhang0822.github.io/index.html">
+    <meta name="description" content="原文发布于 CSDN，本文系近期迁移，想看更多欢迎访问 我的 CSDN 主页 问题描述前段时间在做需求的时候，遇到一个关于forEach和await的坑，记录一下。 在业务代码中存在一段很普通的同步循环逻辑 123456789function handleValueSync(value) &amp;#123;  console.log(value);&amp;#125;const list &#x3D; [1, 2, 3,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="forEach与await引发的血案">
+<meta property="og:url" content="https://raezhang0822.github.io/2023/06/25/forEach%E5%92%8Cawait/index.html">
 <meta property="og:site_name" content="Welcome">
+<meta property="og:description" content="原文发布于 CSDN，本文系近期迁移，想看更多欢迎访问 我的 CSDN 主页 问题描述前段时间在做需求的时候，遇到一个关于forEach和await的坑，记录一下。 在业务代码中存在一段很普通的同步循环逻辑 123456789function handleValueSync(value) &amp;#123;  console.log(value);&amp;#125;const list &#x3D; [1, 2, 3,">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210603172615861.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210625141037769.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210603173057150.png">
+<meta property="article:published_time" content="2023-06-25T04:53:17.912Z">
+<meta property="article:modified_time" content="2023-06-25T04:53:17.912Z">
 <meta property="article:author" content="Rae Zhang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20210603172615861.png">
 
 
-<link rel="canonical" href="https://raezhang0822.github.io/">
+<link rel="canonical" href="https://raezhang0822.github.io/2023/06/25/forEach%E5%92%8Cawait/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://raezhang0822.github.io/2023/06/25/forEach%E5%92%8Cawait/","path":"2023/06/25/forEach和await/","title":"forEach与await引发的血案"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Welcome</title>
+<title>forEach与await引发的血案 | Welcome</title>
   
 
 
@@ -68,7 +76,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Welcome</h1>
+      <p class="site-title">Welcome</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -94,7 +102,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -107,6 +115,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E4%BD%BF%E5%BE%97-await-%E7%94%9F%E6%95%88"><span class="nav-number">2.</span> <span class="nav-text">怎样使得 await 生效</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">Why？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -147,125 +156,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/25/hexo/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rae Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Welcome">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Welcome">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/25/hexo/" class="post-title-link" itemprop="url">Github Pages部署Hexo 踩坑记录</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2023-06-25 04:53:17" itemprop="dateCreated datePublished" datetime="2023-06-25T04:53:17+00:00">2023-06-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><p>这篇博客主要内容</p>
-<ol>
-<li>使用 Hexo（默认主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署</li>
-<li>使用主题后自动部署出错及修复的过程</li>
-</ol>
-<h2 id="Hexo-基本使用和自动部署过程"><a href="#Hexo-基本使用和自动部署过程" class="headerlink" title="Hexo 基本使用和自动部署过程"></a>Hexo 基本使用和自动部署过程</h2><p>hexo 的基本使用参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">官方文档</a><br>使用 GitHub Actions 部署至 GitHub Pages 参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a></p>
-<p>按照上述两个官方文档，可以顺利将默认主题的 Hexo 部署到 GitHub pages.<br>说明下，这种方式只用了一个 <code>username.github.io</code>仓库，main 分支上是 hexo 的源代码，gh-pages 分支上是 hexo 生成的文件。<br>配置的 workflow 可以实现:当 main 分支上有 push 时，重新执行 build 命令,将 public 文件下的内容创建一次 commit 然后 push 到 gh-pages 分支。<br><img src="/./img/hexo/branches.png" alt="image"></p>
-<h2 id="Hexo-使用主题后自动部署失败踩坑记录"><a href="#Hexo-使用主题后自动部署失败踩坑记录" class="headerlink" title="Hexo 使用主题后自动部署失败踩坑记录"></a>Hexo 使用主题后自动部署失败踩坑记录</h2><h3 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h3><h4 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h4><p>以 <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog.git">clean-blog 主题</a> 为例子<br>在项目根目录下执行</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="attr">https</span>:<span class="comment">//github.com/klugjo/hexo-theme-clean-blog.git themes/clean-blog</span></span><br></pre></td></tr></table></figure>
-
-<p>将主题仓库 clone 到 themes 文件夹下</p>
-<h4 id="设置主题"><a href="#设置主题" class="headerlink" title="设置主题"></a>设置主题</h4><p>在根目录下的<code>_config.yml</code> 文件中设置</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme</span>: ”clean-blog“; <span class="comment">// 注意与themes文件夹下的主题文件夹同名</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="部署出错"><a href="#部署出错" class="headerlink" title="部署出错"></a>部署出错</h4><p>可以在本地预览一下是没有问题的，但是当我把这一个主题改动 push 到 main 分支后，站点页面空白了，查看 gh-pages 分支发现文件数量明显少了很多，想了一下应该是主题作为子仓库在云端时没有拉到相应的 github 仓库的代码，导致无法找到主题文件。</p>
-<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>既然是没有主题文件，我尝试修改 workflow, 在 build 前拉取主题文件仓库</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Dependencies</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">  <span class="comment"># 安装主题文件</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Theme</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">git@github.com:klugjo/hexo-theme-clean-blog.git</span> <span class="string">themes/clean-blog</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">peaceiris/actions-gh-pages@v3</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">github_token:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">    <span class="attr">publish_dir:</span> <span class="string">./public</span></span><br></pre></td></tr></table></figure>
-
-<p>push 之后触发重新构建报错<br><img src="/./img/hexo/error.png" alt="image"></p>
-<h4 id="错误原因"><a href="#错误原因" class="headerlink" title="错误原因"></a>错误原因</h4><blockquote>
-<p>这是因为你的开发机器上的用户通常与特定的 GitHub 帐户关联，并且该帐户具有对私有仓库的访问权限，而 GitHub Actions 用户只能看到它所附属的仓库。</p>
-</blockquote>
-<blockquote>
-<p>如今，与 GitHub 进行身份验证的最佳方式是使用部署密钥（Deploy Keys）。这是一组 SSH 密钥，可以为用户提供对特定仓库的只读访问权限（默认情况下）。</p>
-</blockquote>
-<p>所以需要重新生成一组 SSH 密钥。</p>
-<h4 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h4><ol>
-<li><p>生成新的 ssh-keys<br><img src="/./img/hexo/sshKeyGen.png" alt="deployKeys"></p>
-</li>
-<li><p>将公钥添加到 Deploy Keys<br><img src="/./img/hexo/deployKeys.png" alt="deployKeys"></p>
-</li>
-<li><p>将 私钥 添加到 username.github.io 仓库的 密钥中<br><img src="/./img/hexo/secretKey.png" alt="deployKeys"></p>
-</li>
-<li><p>在 workflow 中添加授权</p>
-</li>
-</ol>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Dependencies</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"><span class="comment">#   授权</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Give</span> <span class="string">GitHub</span> <span class="string">Actions</span> <span class="string">access</span> <span class="string">to</span> <span class="string">hexo</span> <span class="string">theme</span> <span class="string">repo</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">webfactory/ssh-agent@v0.7.0</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">ssh-private-key:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.SECRET_REPO_DEPLOY_KEY</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="comment"># 安装主题</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Theme</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">git@github.com:klugjo/hexo-theme-clean-blog.git</span> <span class="string">themes/clean-blog</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br></pre></td></tr></table></figure>
-
-<p>修改完之后重试，即可看到 CI 成功，页面成功部署。</p>
-<p>顺便说明，这种问题只有在使用 <code>git pull</code>方式安装主题时会出现，如果使用 <code>npm install</code> 安装主题，则不会出现上面的问题。支持<code>npm install</code> 这种方式安装的主题有限，我最后选择了 <a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-theme-next">Next</a>, 简单快捷。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo 官方文档</a><br><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a><br><a target="_blank" rel="noopener" href="https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-actions/">GitHub Actions can’t access private repos? Here’s how to fix it</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
     <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/25/forEach%E5%92%8Cawait/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -279,13 +180,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Welcome">
+      <meta itemprop="name" content="forEach与await引发的血案 | Welcome">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/25/forEach%E5%92%8Cawait/" class="post-title-link" itemprop="url">forEach与await引发的血案</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          forEach与await引发的血案
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -307,8 +208,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p>原文发布于 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang/article/details/117528885">CSDN</a>，本文系近期迁移，想看更多欢迎访问 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang?type=blog">我的 CSDN 主页</a></p>
+    <div class="post-body" itemprop="articleBody"><p>原文发布于 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang/article/details/117528885">CSDN</a>，本文系近期迁移，想看更多欢迎访问 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang?type=blog">我的 CSDN 主页</a></p>
 <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>前段时间在做需求的时候，遇到一个关于<code>forEach</code>和<code>await</code>的坑，记录一下。</p>
 <p>在业务代码中存在一段很普通的同步循环逻辑</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleValueSync</span>(<span class="params">value</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>];</span><br><span class="line"></span><br><span class="line">list.<span class="title function_">forEach</span>(<span class="function">(<span class="params">value</span>) =&gt;</span> <span class="title function_">handleValueSync</span>(value));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果，1，2，3，4，5，6，7，8</span></span><br></pre></td></tr></table></figure>
@@ -340,7 +240,6 @@
 <p>所以<code>await</code>不起作用</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33725239/article/details/91390618">当 async&#x2F;await 遇到 map 和 reduce</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/chrissong/p/11247827.html">forEach 和 await&#x2F;async 的问题</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/yumikobu/article/details/84639025">在 foreach 中使用 async&#x2F;await 的问题</a></p>
 
-      
     </div>
 
     
@@ -348,11 +247,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/25/hexo/" rel="next" title="Github Pages部署Hexo 踩坑记录">
+                  Github Pages部署Hexo 踩坑记录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
+
 
 
 
