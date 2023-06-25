@@ -19,23 +19,32 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"raezhang0822.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"style":null,"show_result":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Welcome">
-<meta property="og:url" content="https://raezhang0822.github.io/index.html">
+    <meta name="description" content="原文发布于 CSDN，本文系近期迁移，想看更多欢迎访问 我的 CSDN 主页 本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的博客和源码，用 svelte 重新实现了。 一般用的调音器都是表盘式的，工作原理就是设备听到声音，分析声音的频率，判断出音高之后在屏幕上显示出来，在这个过程中我们可能需要解决这些问题：  获取设备麦克风权限 获">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现一个在线调音器">
+<meta property="og:url" content="https://raezhang0822.github.io/2023/06/25/tuner/index.html">
 <meta property="og:site_name" content="Welcome">
+<meta property="og:description" content="原文发布于 CSDN，本文系近期迁移，想看更多欢迎访问 我的 CSDN 主页 本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的博客和源码，用 svelte 重新实现了。 一般用的调音器都是表盘式的，工作原理就是设备听到声音，分析声音的频率，判断出音高之后在屏幕上显示出来，在这个过程中我们可能需要解决这些问题：  获取设备麦克风权限 获">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raezhang0822.github.io/img/tuner/error.png">
+<meta property="og:image" content="https://raezhang0822.github.io/img/tuner/note.png">
+<meta property="og:image" content="https://raezhang0822.github.io/img/tuner/p.png">
+<meta property="og:image" content="https://raezhang0822.github.io/img/tuner/table.png">
+<meta property="article:published_time" content="2023-06-25T05:39:26.365Z">
+<meta property="article:modified_time" content="2023-06-25T05:39:26.369Z">
 <meta property="article:author" content="Rae Zhang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raezhang0822.github.io/img/tuner/error.png">
 
 
-<link rel="canonical" href="https://raezhang0822.github.io/">
+<link rel="canonical" href="https://raezhang0822.github.io/2023/06/25/tuner/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"en","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://raezhang0822.github.io/2023/06/25/tuner/","path":"2023/06/25/tuner/","title":"实现一个在线调音器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Welcome</title>
+<title>实现一个在线调音器 | Welcome</title>
   
 
 
@@ -68,7 +77,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Welcome</h1>
+      <p class="site-title">Welcome</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -94,7 +103,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -107,6 +116,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%BA%A6%E5%85%8B%E9%A3%8E%E6%9D%83%E9%99%90"><span class="nav-number">1.</span> <span class="nav-text">获取麦克风权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%A3%B0%E9%9F%B3%E6%95%B0%E6%8D%AE"><span class="nav-number">2.</span> <span class="nav-text">获取声音数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%A3%B0%E9%9F%B3%E9%A2%91%E7%8E%87"><span class="nav-number">3.</span> <span class="nav-text">计算声音频率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%9F%B3%E5%90%8D"><span class="nav-number">4.</span> <span class="nav-text">计算音名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E9%9F%B3%E5%90%8D"><span class="nav-number">4.1.</span> <span class="nav-text">关于音名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%8C%87%E9%92%88%E5%81%8F%E8%BD%AC"><span class="nav-number">5.</span> <span class="nav-text">计算指针偏转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E7%9B%98%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.</span> <span class="nav-text">表盘实现</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -147,348 +157,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/25/browserCache/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rae Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Welcome">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Welcome">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/25/browserCache/" class="post-title-link" itemprop="url">浏览器缓存机制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2023-06-25 05:39:26" itemprop="dateCreated datePublished" datetime="2023-06-25T05:39:26+00:00">2023-06-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><small>原文发布于 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang/article/details/117528885">CSDN</a>，本文系近期迁移，想看更多欢迎访问 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang?type=blog">我的 CSDN 主页</a></small></p>
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一个优秀的缓存策略可以缩短网页请求资源的距离，减少延迟，并且由于缓存文件可以重复利用，还可以减少带宽，降低网络负荷。<br> <br> 对于一个数据请求来说，可以分为发起<strong>网络请求</strong>、<strong>后端处理</strong>、<strong>浏览器响应</strong>三个步骤。<br> <br>浏览器缓存可以帮助我们在第一和第三步骤中优化性能:比如说直接使用缓存而不发起请求，或者发起了请求但后端存储的数据和前端一致，那么就没有必要再将数据回传回来，这样就减少了响应数据。</p>
-<h1 id="缓存位置"><a href="#缓存位置" class="headerlink" title="缓存位置"></a>缓存位置</h1><p>浏览器缓存共有四种，且有一定的优先级，当所有缓存都没有命中时才回去进行网络请求。</p>
-<ol>
-<li>Service Worker</li>
-<li>Memory Cache</li>
-<li>Disk Cache</li>
-<li>Push Cache</li>
-</ol>
-<h2 id="Service-Worker"><a href="#Service-Worker" class="headerlink" title="Service Worker"></a>Service Worker</h2><p>Service Worker 是运行在浏览器背后的独立线程，一般可以用来实现缓存功能。使用 Service Worker 的话，传输协议必须为 HTTPS。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。Service Worker 的缓存与浏览器其他内建的缓存机制不同，它可以让我们自由控制缓存哪些文件、如何匹配缓存、如何读取缓存，并且缓存是持续性的。</p>
-<ol>
-<li>注册 Service worker :在你的 index.html 加入以下内容</li>
-</ol>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 判断当前浏览器是否支持serviceWorker */</span></span><br><span class="line"><span class="keyword">if</span> (<span class="string">&quot;serviceWorker&quot;</span> <span class="keyword">in</span> navigator) &#123;</span><br><span class="line">  <span class="comment">/* 当页面加载完成就创建一个serviceWorker */</span></span><br><span class="line">  <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;load&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">/* 创建并指定对应的执行内容 */</span></span><br><span class="line">    <span class="comment">/* scope 参数是可选的，可以用来指定你想让 service worker 控制的内容的子目录。 在这个例子里，我们指定了 &#x27;/&#x27;，表示 根网域下的所有内容。这也是默认值。 */</span></span><br><span class="line">    navigator.<span class="property">serviceWorker</span></span><br><span class="line">      .<span class="title function_">register</span>(<span class="string">&quot;./serviceWorker.js&quot;</span>, &#123; <span class="attr">scope</span>: <span class="string">&quot;./&quot;</span> &#125;)</span><br><span class="line">      .<span class="title function_">then</span>(<span class="keyword">function</span> (<span class="params">registration</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">          <span class="string">&quot;ServiceWorker registration successful with scope: &quot;</span>,</span><br><span class="line">          registration.<span class="property">scope</span></span><br><span class="line">        );</span><br><span class="line">      &#125;)</span><br><span class="line">      .<span class="title function_">catch</span>(<span class="keyword">function</span> (<span class="params">err</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;ServiceWorker registration failed: &quot;</span>, err);</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>2.安装 worker：在我们指定的处理程序 serviceWorker.js 中书写对应的安装及拦截逻辑</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 监听安装事件，install 事件一般是被用来设置你的浏览器的离线缓存逻辑 */</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;install&quot;</span>, <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">  <span class="comment">/* 通过这个方法可以防止缓存未完成，就关闭serviceWorker */</span></span><br><span class="line">  event.<span class="title function_">waitUntil</span>(</span><br><span class="line">    <span class="comment">/* 创建一个名叫V1的缓存版本 */</span></span><br><span class="line">    caches.<span class="title function_">open</span>(<span class="string">&quot;v1&quot;</span>).<span class="title function_">then</span>(<span class="keyword">function</span> (<span class="params">cache</span>) &#123;</span><br><span class="line">      <span class="comment">/* 指定要缓存的内容，地址为相对于跟域名的访问路径 */</span></span><br><span class="line">      <span class="keyword">return</span> cache.<span class="title function_">addAll</span>([<span class="string">&quot;./index.html&quot;</span>]);</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 注册fetch事件，拦截全站的请求 */</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;fetch&quot;</span>, <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">  event.<span class="title function_">respondWith</span>(</span><br><span class="line">    <span class="comment">// magic goes here</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 在缓存中匹配对应请求资源直接返回 */</span></span><br><span class="line">    caches.<span class="title function_">match</span>(event.<span class="property">request</span>)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>当 Service Worker 没有命中缓存的时候，我们需要去调用 fetch 函数获取数据。也就是说，如果我们没有在 Service Worker 命中缓存的话，会根据缓存查找优先级去查找数据。但是不管我们是从 Memory Cache 中还是从网络请求中获取的数据，浏览器都会显示我们是从 Service Worker 中获取的内容。</p>
-<h2 id="Memory-Cache"><a href="#Memory-Cache" class="headerlink" title="Memory Cache"></a>Memory Cache</h2><p>Memory Cache 也就是内存中的缓存</p>
-<p>优点：读取速度快</p>
-<p>缺点：一旦我们关闭 Tab 页面，内存中的缓存也就被释放了。<br>当我们访问过页面以后，再次刷新页面，可以发现很多数据都来自于内存缓存</p>
-<p>当我们刷新一个已经打开的页面，通常可以看到许多 memory cache 的资源。<br><img src="/./img/browserCache/memoryCache.png" alt="image"></p>
-<h2 id="Disk-Cache"><a href="#Disk-Cache" class="headerlink" title="Disk Cache"></a>Disk Cache</h2><p>Disk Cache 也就是存储在硬盘中的缓存，读取速度慢点，但是什么都能存储到磁盘中，比之 Memory Cache 胜在容量和存储时效性上。</p>
-<p>在所有浏览器缓存中，Disk Cache 覆盖面基本是最大的。它会根据 HTTP Herder 中的字段判断哪些资源需要缓存，哪些资源可以不请求直接使用，哪些资源已经过期需要重新请求。并且即使在跨站点的情况下，相同地址的资源一旦被硬盘缓存下来，就不会再次去请求数据。绝大部分的缓存都来自 Disk Cache，关于 HTTP 的协议头中的缓存字段，我们会在下文进行详细介绍。</p>
-<p>浏览器会把哪些文件丢进内存中？哪些丢进硬盘中？<br>关于这点，网上说法不一，不过以下观点比较靠得住：</p>
-<p>对于大文件来说，大概率是不存储在内存中的，反之优先<br>当前系统内存使用率高的话，文件优先存储进硬盘</p>
-<h2 id="Push-Cache"><a href="#Push-Cache" class="headerlink" title="Push Cache"></a>Push Cache</h2><p>Push Cache（推送缓存）是 HTTP&#x2F;2 中的内容，当以上三种缓存都没有命中时，它才会被使用。它只在会话（Session）中存在，一旦会话结束就被释放，并且缓存时间也很短暂，在 Chrome 浏览器中只有 5 分钟左右，同时它也并非严格执行 HTTP 头中的缓存指令。</p>
-<p>浏览器可以拒绝接受已经存在的资源推送<br>你可以给其他域名推送资源<br>如果以上四种缓存都没有命中的话，那么只能发起请求来获取资源了。</p>
-<h1 id="缓存过程分析"><a href="#缓存过程分析" class="headerlink" title="缓存过程分析"></a>缓存过程分析</h1><p><img src="/./img/browserCache/cacheProcess.png" alt="image"><br>根据是否需要向服务器重新发起 HTTP 请求将缓存过程分为两个部分，分别是强缓存和协商缓存。</p>
-<h1 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h1><p>不会向服务器发送请求，直接从缓存中读取资源。</p>
-<p>在 chrome 控制台的 Network 选项中可以看到该请求返回 200 的状态码，并且 Size 显示<strong>from disk cache</strong>或<strong>from memory cache</strong>。<br>如<br><img src="/./img/browserCache/memoryCacheExample.png" alt="image"></p>
-<p>强缓存可以通过设置两种 HTTP Header 实现：Expires 和 Cache-Control。</p>
-<ol>
-<li><p>Expires<br>缓存过期时间，用来指定资源到期的时间，是服务器端的具体的时间点。</p>
-</li>
-<li><p>Cache-Control<br>比如：Cache-Control:max-age&#x3D;300 时，则代表在这个请求正确返回的 5 分钟内再次加载资源，就会命中强缓存。<br><img src="/./img/browserCache/cacheControlExample.png" alt="image"></p>
-</li>
-</ol>
-<h2 id="Expires-和-Cache-Control-的差别"><a href="#Expires-和-Cache-Control-的差别" class="headerlink" title="Expires 和 Cache-Control 的差别"></a>Expires 和 Cache-Control 的差别</h2><p>其实这两者差别不大，区别就在于 Expires 是 http1.0 的产物，Cache-Control 是 http1.1 的产物，两者同时存在的话，Cache-Control 优先级高于 Expires；在某些不支持 HTTP1.1 的环境下，Expires 就会发挥用处。所以 Expires 其实是过时的产物，现阶段它的存在只是一种兼容性的写法。</p>
-<p>强缓存判断是否缓存的依据来自于是否超出某个时间或者某个时间段，而不关心服务器端文件是否已经更新，这可能会导致加载文件不是服务器端最新的内容，那我们如何获知服务器端内容是否已经发生了更新呢？此时我们需要用到协商缓存策略。</p>
-<h1 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h1><p>协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程。<br>协商缓存可以通过设置两种 HTTP Header 实现：Last-Modified 和 ETag 。</p>
-<h2 id="Last-Modified-和-If-Modified-Since"><a href="#Last-Modified-和-If-Modified-Since" class="headerlink" title="Last-Modified 和 If-Modified-Since"></a>Last-Modified 和 If-Modified-Since</h2><p>Last-Modified 指的是这个资源在服务器上的最后修改时间，<br>浏览器下一次请求这个资源，浏览器检测到有 Last-Modified 这个 header，于是添加 If-Modified-Since 这个 header，值就是 Last-Modified 中的值；服务器再次收到这个资源请求，会根据 If-Modified-Since 中的值与服务器中这个资源的最后修改时间对比，如果没有变化，返回 304 和空的响应体，直接从缓存读取<br><img src="/./img/browserCache/negotiationCacheProcess.png" alt="image"></p>
-<p>如下面这个请求：<br>request headers 中有 if-modified-since,表明浏览器之前请求过这个资源<br><img src="/./img/browserCache/negotiationCacheExample.png" alt="image"><br>response headers 返回状态 304,表明协商缓存成功，last-modified 与请求头中的 if-modified-since 一致。<br><img src="/./img/browserCache/negotiationCacheExample2.png" alt="image"></p>
-<p>如果 If-Modified-Since 的时间小于服务器中这个资源的最后修改时间，说明文件有更新，协商缓存失效，返回 200 和请求结果<br><img src="/./img/browserCache/withoutCacheProcess.png" alt="image"></p>
-<h3 id="弊端："><a href="#弊端：" class="headerlink" title="弊端："></a>弊端：</h3><p>如果本地打开缓存文件，即使没有对文件进行修改，但还是会造成 Last-Modified 被修改，服务端不能命中缓存导致发送相同的资源。</p>
-<p>因为 Last-Modified 只能以秒计时，如果在不可感知的时间内修改完成文件，那么服务端会认为资源还是命中了，不会返回正确的资源。</p>
-<p>既然根据文件修改时间来决定是否缓存尚有不足，能否可以直接根据文件内容是否修改来决定缓存策略？所以在 HTTP &#x2F; 1.1 出现了 ETag 和 If-None-Match</p>
-<h2 id="ETag-和-If-None-Match"><a href="#ETag-和-If-None-Match" class="headerlink" title="ETag 和 If-None-Match"></a>ETag 和 If-None-Match</h2><p>Etag 是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，只要资源有变化，Etag 就会重新生成。<br>浏览器在下一次加载资源向服务器发送请求时，会将上一次返回的 Etag 值放到 request header 里的 If-None-Match 里，服务器只需要比较客户端传来的 If-None-Match 跟自己服务器上该资源的 ETag 是否一致，就能很好地判断资源相对客户端而言是否被修改过了。如果服务器发现 ETag 匹配不上，那么直接以常规 GET 200 回包形式将新的资源（当然也包括了新的 ETag）发给客户端；如果 ETag 是一致的，则直接返回 304 知会客户端直接使用本地缓存即可。</p>
-<p><img src="/./img/browserCache/EtagProcess.png" alt="image"></p>
-<h2 id="协商缓存的两者对比"><a href="#协商缓存的两者对比" class="headerlink" title="协商缓存的两者对比"></a>协商缓存的两者对比</h2><p>精度：Etag 要优于 Last-Modified。<br>性能：Last-Modified 要优于 Etag。<br>优先级：服务器校验优先考虑 Etag</p>
-<h1 id="实际使用策略"><a href="#实际使用策略" class="headerlink" title="实际使用策略"></a>实际使用策略</h1><p>对与频繁变动的资源：<br>使用 Cache-Control: no-cache，使浏览器每次都请求服务器，然后配合 ETag 或者 Last-Modified 来验证资源是否有效。这样的做法虽然不能节省请求数量，但是能显著减少响应数据大小。</p>
-<p>对于不常变化的资源：<br>通常在处理这类资源时，给它们的 Cache-Control 配置一个很大的 max-age&#x3D;31536000 (一年)，这样浏览器之后请求相同的 URL 会命中强制缓存。而为了解决更新的问题，就需要在文件名(或者路径)中添加 hash， 版本号等动态字符，之后更改动态字符，从而达到更改引用 URL 的目的，让之前的强制缓存失效 (其实并未立即失效，只是不再使用了而已)。</p>
-<h1 id="用户行为如何触发缓存"><a href="#用户行为如何触发缓存" class="headerlink" title="用户行为如何触发缓存"></a>用户行为如何触发缓存</h1><p>打开网页，地址栏输入地址： 查找 disk cache 中是否有匹配。如有则使用；如没有则发送网络请求。<br>普通刷新 (F5)：因为 TAB 并没有关闭，因此 memory cache 是可用的，会被优先使用(如果匹配的话)。其次才是 disk cache。<br>强制刷新 (Ctrl + F5)：浏览器不使用缓存，因此发送的请求头部均带有 Cache-control: no-cache(为了兼容，还带了 Pragma: no-cache),服务器直接返回 200 和最新内容。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/54cc04190252">深入理解浏览器的缓存机制</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43972437/article/details/105513486">浏览器缓存：memory cache、disk cache、强缓存协商缓存等概念</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/115243059">service worker 是什么？看这篇就够了</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/25/forEach%E5%92%8Cawait/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rae Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Welcome">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Welcome">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/25/forEach%E5%92%8Cawait/" class="post-title-link" itemprop="url">forEach与await引发的血案</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2023-06-25 05:39:26" itemprop="dateCreated datePublished" datetime="2023-06-25T05:39:26+00:00">2023-06-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><small>原文发布于 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang/article/details/117528885">CSDN</a>，本文系近期迁移，想看更多欢迎访问 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang?type=blog">我的 CSDN 主页</a></small></p>
-<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>前段时间在做需求的时候，遇到一个关于<code>forEach</code>和<code>await</code>的坑，记录一下。</p>
-<p>在业务代码中存在一段很普通的同步循环逻辑</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleValueSync</span>(<span class="params">value</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>];</span><br><span class="line"></span><br><span class="line">list.<span class="title function_">forEach</span>(<span class="function">(<span class="params">value</span>) =&gt;</span> <span class="title function_">handleValueSync</span>(value));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果，1，2，3，4，5，6，7，8</span></span><br></pre></td></tr></table></figure>
-
-<p>某一天，需求突然产生变化,原本同步的 handleValueSync 方法变成了异步的，所以我在原先代码基础上进行了简单的修改：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleValueAsync</span>(<span class="params">value</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (value % <span class="number">2</span> === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="title class_">Promise</span>.<span class="title function_">resolve</span>().<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;value&#125;</span>`</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>];</span><br><span class="line"></span><br><span class="line">list.<span class="title function_">forEach</span>(<span class="keyword">async</span> (value) =&gt; <span class="keyword">await</span> <span class="title function_">handleValueAsync</span>(value));</span><br></pre></td></tr></table></figure>
-
-<p>预期: 每次循环时，一定会 <code>await handleValueAsync</code>结束，然后开始下一次循环。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 预期结果 1，2，3，4，5，6，7，8</span></span><br></pre></td></tr></table></figure>
-
-<p>实际输出结果却是<br><img src="/./img/forEach/wrong.png" alt="image"><br>await 似乎并没有生效。<br>换成 map 和 reduce 试一下</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">list.<span class="title function_">map</span>(<span class="keyword">async</span> (value) =&gt; <span class="keyword">await</span> <span class="title function_">handleValueAsync</span>(value));</span><br><span class="line"></span><br><span class="line">list.<span class="title function_">reduce</span>(<span class="keyword">async</span> (&#123;&#125;, value) =&gt; <span class="keyword">await</span> <span class="title function_">handleValueAsync</span>(value), &#123;&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>也都是同样的结果<br><img src="/./img/forEach/wrong2.png" alt="image"></p>
-<h2 id="怎样使得-await-生效"><a href="#怎样使得-await-生效" class="headerlink" title="怎样使得 await 生效"></a>怎样使得 await 生效</h2><p>网上搜索了一番，发现<code>forEach</code>就是不能支持异步调用，解决这个方法就是将 forEach 方法换成普通 for 循环就可以了。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">handleValueAsync</span>(<span class="params">value</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (value % <span class="number">2</span> === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="title class_">Promise</span>.<span class="title function_">resolve</span>().<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;value&#125;</span>`</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">awaitLoop</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; list.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="title function_">handleValueAsync</span>(list[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">awaitLoop</span>();</span><br></pre></td></tr></table></figure>
-
-<p>结果<br><img src="/./img/forEach/right.png" alt="image"></p>
-<p>这下就对了。。</p>
-<h2 id="Why？"><a href="#Why？" class="headerlink" title="Why？"></a>Why？</h2><p>为什么 forEach 无法支持 await，而 for 循环可以呢？<br>搜了一下 forEach 的实现原理，原来 forEach 是 es6 的新语法。</p>
-<blockquote>
-<p>forEach() 是在第五版本里被添加到 ECMA-262 标准的；这样它可能在标准的其他实现中不存在，你可以在你调用 forEach() 之前插入下面的代码，在本地不支持的情况下使用 forEach()。</p>
-<p>看下 MDN 上的<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">forEach 的 pollyfill 源码</a></p>
-</blockquote>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Production steps of ECMA-262, Edition 5, 15.4.4.18</span></span><br><span class="line"><span class="comment">// Reference: http://es5.github.io/#x15.4.4.18</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">forEach</span>) &#123;</span><br><span class="line">  <span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">forEach</span> = <span class="keyword">function</span> (<span class="params">callback, thisArg</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> T, k;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span> == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">TypeError</span>(<span class="string">&quot; this is null or not defined&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. Let O be the result of calling toObject() passing the</span></span><br><span class="line">    <span class="comment">// |this| value as the argument.</span></span><br><span class="line">    <span class="keyword">var</span> O = <span class="title class_">Object</span>(<span class="variable language_">this</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. Let lenValue be the result of calling the Get() internal</span></span><br><span class="line">    <span class="comment">// method of O with the argument &quot;length&quot;.</span></span><br><span class="line">    <span class="comment">// 3. Let len be toUint32(lenValue).</span></span><br><span class="line">    <span class="keyword">var</span> len = O.<span class="property">length</span> &gt;&gt;&gt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. If isCallable(callback) is false, throw a TypeError exception.</span></span><br><span class="line">    <span class="comment">// See: http://es5.github.com/#x9.11</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">&quot;function&quot;</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">TypeError</span>(callback + <span class="string">&quot; is not a function&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5. If thisArg was supplied, let T be thisArg; else let</span></span><br><span class="line">    <span class="comment">// T be undefined.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">arguments</span>.<span class="property">length</span> &gt; <span class="number">1</span>) &#123;</span><br><span class="line">      T = thisArg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 6. Let k be 0</span></span><br><span class="line">    k = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 7. Repeat, while k &lt; len</span></span><br><span class="line">    <span class="keyword">while</span> (k &lt; len) &#123;</span><br><span class="line">      <span class="keyword">var</span> kValue;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// a. Let Pk be ToString(k).</span></span><br><span class="line">      <span class="comment">//    This is implicit for LHS operands of the in operator</span></span><br><span class="line">      <span class="comment">// b. Let kPresent be the result of calling the HasProperty</span></span><br><span class="line">      <span class="comment">//    internal method of O with argument Pk.</span></span><br><span class="line">      <span class="comment">//    This step can be combined with c</span></span><br><span class="line">      <span class="comment">// c. If kPresent is true, then</span></span><br><span class="line">      <span class="keyword">if</span> (k <span class="keyword">in</span> O) &#123;</span><br><span class="line">        <span class="comment">// i. Let kValue be the result of calling the Get internal</span></span><br><span class="line">        <span class="comment">// method of O with argument Pk.</span></span><br><span class="line">        kValue = O[k];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// ii. Call the Call internal method of callback with T as</span></span><br><span class="line">        <span class="comment">// the this value and argument list containing kValue, k, and O.</span></span><br><span class="line">        callback.<span class="title function_">call</span>(T, kValue, k, O);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// d. Increase k by 1.</span></span><br><span class="line">      k++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 8. return undefined</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>简化一下，其实 <code>forEach</code>就是通过<code>while</code>循环多次执行 callback，相当于在 for 循环中执行了异步函数,<code>forEach</code>可以看成是这样</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; list.<span class="property">length</span>; i++) &#123;</span><br><span class="line">  (<span class="keyword">async</span> <span class="keyword">function</span> (<span class="params">value</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (value % <span class="number">2</span> === <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="title class_">Promise</span>.<span class="title function_">resolve</span>().<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;value&#125;</span>`</span>);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)(list[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>所以<code>await</code>不起作用</p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33725239/article/details/91390618">当 async&#x2F;await 遇到 map 和 reduce</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/chrissong/p/11247827.html">forEach 和 await&#x2F;async 的问题</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/yumikobu/article/details/84639025">在 foreach 中使用 async&#x2F;await 的问题</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/25/hexo/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rae Zhang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Welcome">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Welcome">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/25/hexo/" class="post-title-link" itemprop="url">Github Pages部署Hexo 踩坑记录</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2023-06-25 05:39:26" itemprop="dateCreated datePublished" datetime="2023-06-25T05:39:26+00:00">2023-06-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><p>这篇博客主要内容</p>
-<ol>
-<li>使用 Hexo（默认主题） 搭建 Github Pages 的过程并使用 Github Actions 实现自动部署</li>
-<li>使用主题后自动部署出错及修复的过程</li>
-</ol>
-<h2 id="Hexo-基本使用和自动部署过程"><a href="#Hexo-基本使用和自动部署过程" class="headerlink" title="Hexo 基本使用和自动部署过程"></a>Hexo 基本使用和自动部署过程</h2><p>hexo 的基本使用参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">官方文档</a><br>使用 GitHub Actions 部署至 GitHub Pages 参考 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a></p>
-<p>按照上述两个官方文档，可以顺利将默认主题的 Hexo 部署到 GitHub pages.<br>说明下，这种方式只用了一个 <code>username.github.io</code>仓库，main 分支上是 hexo 的源代码，gh-pages 分支上是 hexo 生成的文件。<br>配置的 workflow 可以实现:当 main 分支上有 push 时，重新执行 build 命令,将 public 文件下的内容创建一次 commit 然后 push 到 gh-pages 分支。<br><img src="/./img/hexo/branches.png" alt="image"></p>
-<h2 id="Hexo-使用主题后自动部署失败踩坑记录"><a href="#Hexo-使用主题后自动部署失败踩坑记录" class="headerlink" title="Hexo 使用主题后自动部署失败踩坑记录"></a>Hexo 使用主题后自动部署失败踩坑记录</h2><h3 id="问题场景"><a href="#问题场景" class="headerlink" title="问题场景"></a>问题场景</h3><h4 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h4><p>以 <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog.git">clean-blog 主题</a> 为例子<br>在项目根目录下执行</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="attr">https</span>:<span class="comment">//github.com/klugjo/hexo-theme-clean-blog.git themes/clean-blog</span></span><br></pre></td></tr></table></figure>
-
-<p>将主题仓库 clone 到 themes 文件夹下</p>
-<h4 id="设置主题"><a href="#设置主题" class="headerlink" title="设置主题"></a>设置主题</h4><p>在根目录下的<code>_config.yml</code> 文件中设置</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme</span>: ”clean-blog“; <span class="comment">// 注意与themes文件夹下的主题文件夹同名</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="部署出错"><a href="#部署出错" class="headerlink" title="部署出错"></a>部署出错</h4><p>可以在本地预览一下是没有问题的，但是当我把这一个主题改动 push 到 main 分支后，站点页面空白了，查看 gh-pages 分支发现文件数量明显少了很多，想了一下应该是主题作为子仓库在云端时没有拉到相应的 github 仓库的代码，导致无法找到主题文件。</p>
-<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>既然是没有主题文件，我尝试修改 workflow, 在 build 前拉取主题文件仓库</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Dependencies</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">  <span class="comment"># 安装主题文件</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Theme</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">git@github.com:klugjo/hexo-theme-clean-blog.git</span> <span class="string">themes/clean-blog</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">peaceiris/actions-gh-pages@v3</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">github_token:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">    <span class="attr">publish_dir:</span> <span class="string">./public</span></span><br></pre></td></tr></table></figure>
-
-<p>push 之后触发重新构建报错<br><img src="/./img/hexo/error.png" alt="image"></p>
-<h4 id="错误原因"><a href="#错误原因" class="headerlink" title="错误原因"></a>错误原因</h4><blockquote>
-<p>这是因为你的开发机器上的用户通常与特定的 GitHub 帐户关联，并且该帐户具有对私有仓库的访问权限，而 GitHub Actions 用户只能看到它所附属的仓库。</p>
-</blockquote>
-<blockquote>
-<p>如今，与 GitHub 进行身份验证的最佳方式是使用部署密钥（Deploy Keys）。这是一组 SSH 密钥，可以为用户提供对特定仓库的只读访问权限（默认情况下）。</p>
-</blockquote>
-<p>所以需要重新生成一组 SSH 密钥。</p>
-<h4 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h4><ol>
-<li><p>生成新的 ssh-keys<br><img src="/./img/hexo/sshKeyGen.png" alt="deployKeys"></p>
-</li>
-<li><p>将公钥添加到 Deploy Keys<br><img src="/./img/hexo/deployKeys.png" alt="deployKeys"></p>
-</li>
-<li><p>将 私钥 添加到 username.github.io 仓库的 密钥中<br><img src="/./img/hexo/secretKey.png" alt="deployKeys"></p>
-</li>
-<li><p>在 workflow 中添加授权</p>
-</li>
-</ol>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Dependencies</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"><span class="comment">#   授权</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Give</span> <span class="string">GitHub</span> <span class="string">Actions</span> <span class="string">access</span> <span class="string">to</span> <span class="string">hexo</span> <span class="string">theme</span> <span class="string">repo</span></span><br><span class="line">  <span class="attr">uses:</span> <span class="string">webfactory/ssh-agent@v0.7.0</span></span><br><span class="line">  <span class="attr">with:</span></span><br><span class="line">    <span class="attr">ssh-private-key:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.SECRET_REPO_DEPLOY_KEY</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="comment"># 安装主题</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">Theme</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">git@github.com:klugjo/hexo-theme-clean-blog.git</span> <span class="string">themes/clean-blog</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">  <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br></pre></td></tr></table></figure>
-
-<p>修改完之后重试，即可看到 CI 成功，页面成功部署。</p>
-<p>顺便说明，这种问题只有在使用 <code>git pull</code>方式安装主题时会出现，如果使用 <code>npm install</code> 安装主题，则不会出现上面的问题。支持<code>npm install</code> 这种方式安装的主题有限，我最后选择了 <a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-theme-next">Next</a>, 简单快捷。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo 官方文档</a><br><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/github-pages.html">在 GitHub Pages 上部署 Hexo</a><br><a target="_blank" rel="noopener" href="https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-actions/">GitHub Actions can’t access private repos? Here’s how to fix it</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
     <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/25/tuner/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -502,13 +181,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Welcome">
+      <meta itemprop="name" content="实现一个在线调音器 | Welcome">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/25/tuner/" class="post-title-link" itemprop="url">实现一个在线调音器</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          实现一个在线调音器
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -530,8 +209,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p><small>原文发布于 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang/article/details/113075391?spm=1001.2014.3001.5502">CSDN</a>，本文系近期迁移，想看更多欢迎访问 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang?type=blog">我的 CSDN 主页</a></small></p>
+    <div class="post-body" itemprop="articleBody"><p><small>原文发布于 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang/article/details/113075391?spm=1001.2014.3001.5502">CSDN</a>，本文系近期迁移，想看更多欢迎访问 <a target="_blank" rel="noopener" href="https://blog.csdn.net/RaeZhang?type=blog">我的 CSDN 主页</a></small></p>
 <p>本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4fd8779943c3">博客</a>和<a target="_blank" rel="noopener" href="https://github.com/qiuxiang/tuner">源码</a>，用 svelte 重新实现了。</p>
 <p>一般用的调音器都是表盘式的，工作原理就是设备听到声音，分析声音的频率，判断出音高之后在屏幕上显示出来，在这个过程中我们可能需要解决这些问题：</p>
 <ol>
@@ -605,7 +283,6 @@
 
 <p>以上就是代码的核心部分。</p>
 
-      
     </div>
 
     
@@ -613,11 +290,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/25/hexo/" rel="next" title="Github Pages部署Hexo 踩坑记录">
+                  Github Pages部署Hexo 踩坑记录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
+
 
 
 
