@@ -1,9 +1,3 @@
----
-title: forEach与await引发的血案
----
-
-<small>原文发布于 [CSDN](https://blog.csdn.net/RaeZhang/article/details/117528885)，本文系近期迁移，想看更多欢迎访问 [我的 CSDN 主页](https://blog.csdn.net/RaeZhang?type=blog)</small>
-
 ## 问题描述
 
 前段时间在做需求的时候，遇到一个关于`forEach`和`await`的坑，记录一下。
@@ -47,7 +41,7 @@ list.forEach(async (value) => await handleValueAsync(value));
 ```
 
 实际输出结果却是
-![image](./img/forEach/wrong.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210603172615861.png)
 await 似乎并没有生效。
 换成 map 和 reduce 试一下
 
@@ -58,7 +52,7 @@ list.reduce(async ({}, value) => await handleValueAsync(value), {});
 ```
 
 也都是同样的结果
-![image](./img/forEach/wrong2.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210625141037769.png)
 
 ## 怎样使得 await 生效
 
@@ -86,8 +80,7 @@ awaitLoop();
 ```
 
 结果
-![image](./img/forEach/right.png)
-
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210603173057150.png)
 这下就对了。。
 
 ## Why？
