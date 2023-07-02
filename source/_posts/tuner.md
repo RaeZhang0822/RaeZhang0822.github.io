@@ -4,7 +4,7 @@ title: 实现一个在线调音器
 
 <small>原文发布于 [CSDN](https://blog.csdn.net/RaeZhang/article/details/113075391?spm=1001.2014.3001.5502)，本文系近期迁移，想看更多欢迎访问 [我的 CSDN 主页](https://blog.csdn.net/RaeZhang?type=blog)</small>
 
-本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的[博客](https://www.jianshu.com/p/4fd8779943c3)和[源码](https://github.com/qiuxiang/tuner)，用 svelte 重新实现了。
+本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的[博客](https://www.jianshu.com/p/4fd8779943c3)和[源码](https://github.com/qiuxiang/tuner)，用 svelte 重新实现了,最终效果请看 [演示](https://raezhang0822.github.io/codes/tuner/app/index.html)
 
 一般用的调音器都是表盘式的，工作原理就是设备听到声音，分析声音的频率，判断出音高之后在屏幕上显示出来，在这个过程中我们可能需要解决这些问题：
 
