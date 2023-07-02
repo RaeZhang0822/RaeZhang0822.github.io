@@ -28,7 +28,7 @@ archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
-# 跳过主题render
+# 跳过主题render, 只有这样写才生效
 skip_render: [codes/*, codes/**/*]
 
 # Writing
