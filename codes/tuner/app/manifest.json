@@ -5,7 +5,7 @@
     "background_color": "#3a311c",
     "display": "standalone",
     "Scope": "/",
-    "start_url": "/",
+    "start_url": "https://raezhang0822.github.io/",
     "icons": [
         {
             "src": "/source/img/tuner/tuner.jpeg",
