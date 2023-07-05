@@ -1,5 +1,7 @@
 ---
 title: forEach与await引发的血案
+date: 2023-06-11 16:46:21
+tags: js原理
 ---
 
 <small>原文发布于 [CSDN](https://blog.csdn.net/RaeZhang/article/details/117528885)，本文系近期迁移，想看更多欢迎访问 [我的 CSDN 主页](https://blog.csdn.net/RaeZhang?type=blog)</small>

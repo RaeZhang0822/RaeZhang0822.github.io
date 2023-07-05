@@ -1,5 +1,7 @@
 ---
 title: Github Pages部署Hexo 踩坑记录
+date: 2023-06-05 16:46:21
+tags: 踩坑
 ---
 
 ## Quick Start
