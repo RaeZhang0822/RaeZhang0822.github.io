@@ -1,0 +1,17 @@
+{
+    "name": "在线调音器",
+    "short_name": "tuner",
+    "theme_color": "#3a311c",
+    "background_color": "#3a311c",
+    "display": "standalone",
+    "Scope": "/",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "/source/img/tuner/tuner.jpeg",
+            "sizes": "72x72",
+            "type": "image/jpeg"
+        }
+    ],
+    "splash_pages": null
+}
