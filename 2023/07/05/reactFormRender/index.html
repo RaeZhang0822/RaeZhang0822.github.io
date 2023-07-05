@@ -19,16 +19,16 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"raezhang0822.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"style":null,"show_result":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="背景渠道对接需要编写大量重复职位信息的表单，所以自己用类似 JSON Schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。 支持完善的动态逻辑表达能力。在 表单配置 层面，能够完善的应对一些">
+    <meta name="description" content="背景渠道对接需要编写大量重复职位信息的表单，怎样才能减少编写重复表单代码呢? 业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单。 支持完善的动态逻辑表达能力。 在表单配置层面，能够完善的应对业务场景中出现的联动及动态校验场景。 拥有完善的自定义能力。因为需要使用内部 UI 组件实现。 有处理异步数据源的能力。比如一个下拉选项，可选项需要从后端异步拉取，这是非常常见的需求。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React前端表单解决方案对比">
 <meta property="og:url" content="https://raezhang0822.github.io/2023/07/05/reactFormRender/index.html">
 <meta property="og:site_name" content="Welcome">
-<meta property="og:description" content="背景渠道对接需要编写大量重复职位信息的表单，所以自己用类似 JSON Schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。 支持完善的动态逻辑表达能力。在 表单配置 层面，能够完善的应对一些">
+<meta property="og:description" content="背景渠道对接需要编写大量重复职位信息的表单，怎样才能减少编写重复表单代码呢? 业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单。 支持完善的动态逻辑表达能力。 在表单配置层面，能够完善的应对业务场景中出现的联动及动态校验场景。 拥有完善的自定义能力。因为需要使用内部 UI 组件实现。 有处理异步数据源的能力。比如一个下拉选项，可选项需要从后端异步拉取，这是非常常见的需求。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raezhang0822.github.io/img/formRender/formik.png">
 <meta property="article:published_time" content="2023-07-05T16:46:21.000Z">
-<meta property="article:modified_time" content="2023-07-05T06:37:30.578Z">
+<meta property="article:modified_time" content="2023-07-05T06:54:00.942Z">
 <meta property="article:author" content="Rae Zhang">
 <meta property="article:tag" content="项目记录">
 <meta name="twitter:card" content="summary">
@@ -211,10 +211,11 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>渠道对接需要编写大量重复职位信息的表单，所以自己用类似 JSON Schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。<br>业务场景核心诉求：</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p><em>渠道对接需要编写大量重复职位信息的表单，怎样才能减少编写重复表单代码呢?</em></p>
+<p>业务场景核心诉求：</p>
 <ol>
-<li>具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。</li>
-<li>支持完善的动态逻辑表达能力。<br>在 表单配置 层面，能够完善的应对一些联动及动态校验场景。并且最好拥有一些底线思维，比如提供的动态语法一旦不满足要求，可以直接手写字符串的 js function（最好解决作用域的问题）。</li>
+<li>具备远程动态渲染能力。也就是支持根据配置动态渲染表单。</li>
+<li>支持完善的动态逻辑表达能力。 在表单配置层面，能够完善的应对业务场景中出现的联动及动态校验场景。</li>
 <li>拥有完善的自定义能力。因为需要使用内部 UI 组件实现。</li>
 <li>有处理异步数据源的能力。比如一个下拉选项，可选项需要从后端异步拉取，这是非常常见的需求。但如何让一个静态的 JSON 表达异步请求，是一个难点。</li>
 </ol>
@@ -275,11 +276,12 @@
 <li>支持多种表单校验方式。</li>
 </ul>
 <h3 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h3><p>和 Formik 类似，不包含任意样式，某种程度上也是优点，支持自定义 UI。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Formik 和 react-hook-form 更多是处理表单的性能和校验问题，并不是原生就支持 json-schema。所以并不适配业务场景。</p>
-<p>Formily 和 XRender 二者都支持 json-schema。<br>Formily 功能全面，但体积更大，接自定义 UI 组件成本高，学习成本也高；<br>x-render 本身附带的有一个开源的表单编辑器。已经集成了物料拖拽等基础交互，所以，整体的表单编辑器可以基于它进行二次开发。渲染器这部分, 可以利用它易用的自定义组件能力整体将内置组件封装一层异步逻辑去支持缺失的异步数据源等功能，扩展性会比较强。这个 <a target="_blank" rel="noopener" href="https://github.com/alibaba/x-render/issues/94">x-render 实际应用集合</a>里有一些比较成熟线上例子。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Formik 和 React Hook Form 更多是处理表单的性能和校验问题，并不是原生就支持根据配置动态渲染表单。</p>
+<p>Formily 和 XRender 二者都支持 根据 JSON Schema 动态渲染表单。<br>Formily 功能全面，但体积更大，接自定义 UI 组件成本高，学习成本也高；<br>XRender 本身附带的有一个开源的表单编辑器。已经集成了物料拖拽等基础交互，所以，整体的表单编辑器可以基于它进行二次开发。渲染器这部分, 可以利用它易用的自定义组件能力整体将内置组件封装一层异步逻辑去支持缺失的异步数据源等功能，扩展性会比较强。这个 <a target="_blank" rel="noopener" href="https://github.com/alibaba/x-render/issues/94">x-render 实际应用集合</a>里有一些比较成熟线上例子。</p>
 <p>总体来看，如果不是自己造轮子的话，XRender 更适合当前业务场景的需求。</p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>虽然自己造轮子解决了类似的表单场景，但通过调研开源方案发现了自己的轮子缺失的部分，比如我使用了自己定义的表单字段规则而不是标准的 JSON Schema 对象，优点是联动和校验相比标准 json-schema 都要简单一些，缺点则是无法借助 ajv 等工具对配置对象进行有效性检测，只能全部依赖于人工测试。</p>
-<p>如果能重来，我应该会选 标准 JSON Schema 方便自动检测、后期维护和迁移。表单渲染器部分还是会自己实现，因为需要使用内部的 UI 组件，而且需要异步获取数据，这两项对 XRender 的二次开发成本和自己实现一个简单的表单渲染器实际可能差不多，相比较之下，内部实现的代码更好维护一些。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>方案调研阶段，只看了 Formily 相关的文档，发现学习成本较高,包体积大，使用自定义组件成本高，同时使用的 JSON Schema 配置很复杂，所以没有采用。</p>
+<p>虽然自己造轮子解决了类似的表单场景，但通过调研开源方案发现了自己的轮子缺失的部分，比如我使用了自己定义的表单字段规则而不是标准的 JSON Schema 对象，优点是联动和校验相比标准 JSON Schema 都要简单一些，缺点则是无法借助 ajv 等工具对配置对象进行有效性检测，只能全部依赖于人工测试。后期如果表单功能拓展，需要往 XRender 或者 其他方案迁移会存在阻碍。</p>
+<p>如果能重来，我应该会选 标准 JSON Schema 规则约定表单配置, 方便自动检测、后期维护和迁移。表单渲染器部分还是会自己实现，因为需要使用内部的 UI 组件，而且需要异步获取数据，这两项对 XRender 的二次开发成本和自己实现一个简单的表单渲染器实际可能差不多，相比较之下，内部实现的代码更好维护一些。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7207964899381018661">React 前端表单解决方案</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/billyu/p/13792908.html">Redux-form vs formik vs react-hook-form</a></p>
 
     </div>
