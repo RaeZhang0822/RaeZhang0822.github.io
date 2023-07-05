@@ -19,16 +19,16 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"raezhang0822.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"style":null,"show_result":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="背景渠道对接需要编写大量重复职位信息的表单，所以自己用类似 json-schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。 支持完善的动态逻辑表达能力。在 表单配置 层面，能够完善的应对一些">
+    <meta name="description" content="背景渠道对接需要编写大量重复职位信息的表单，所以自己用类似 JSON Schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。 支持完善的动态逻辑表达能力。在 表单配置 层面，能够完善的应对一些">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React前端表单解决方案对比">
 <meta property="og:url" content="https://raezhang0822.github.io/2023/07/05/formRender/index.html">
 <meta property="og:site_name" content="Welcome">
-<meta property="og:description" content="背景渠道对接需要编写大量重复职位信息的表单，所以自己用类似 json-schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。 支持完善的动态逻辑表达能力。在 表单配置 层面，能够完善的应对一些">
+<meta property="og:description" content="背景渠道对接需要编写大量重复职位信息的表单，所以自己用类似 JSON Schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。业务场景核心诉求：  具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。 支持完善的动态逻辑表达能力。在 表单配置 层面，能够完善的应对一些">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raezhang0822.github.io/img/formRender/formik.png">
 <meta property="article:published_time" content="2023-07-05T16:46:21.000Z">
-<meta property="article:modified_time" content="2023-07-05T06:31:18.742Z">
+<meta property="article:modified_time" content="2023-07-05T06:31:53.850Z">
 <meta property="article:author" content="Rae Zhang">
 <meta property="article:tag" content="项目记录">
 <meta name="twitter:card" content="summary">
@@ -211,7 +211,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>渠道对接需要编写大量重复职位信息的表单，所以自己用类似 json-schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。<br>业务场景核心诉求：</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>渠道对接需要编写大量重复职位信息的表单，所以自己用类似 JSON Schema 的规则写了一套表单渲染逻辑，完成之后对业务提升效果很大。回看最初的方案调研阶段，发现除了 Formily,有很多其他的成熟的开源方案可以借鉴，所以总结一下。<br>业务场景核心诉求：</p>
 <ol>
 <li>具备远程动态渲染能力。也就是支持根据配置动态渲染表单 ，这是硬性条件。</li>
 <li>支持完善的动态逻辑表达能力。<br>在 表单配置 层面，能够完善的应对一些联动及动态校验场景。并且最好拥有一些底线思维，比如提供的动态语法一旦不满足要求，可以直接手写字符串的 js function（最好解决作用域的问题）。</li>
@@ -297,8 +297,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/07/05/hexo/" rel="prev" title="Github Pages部署Hexo 踩坑记录">
-                  <i class="fa fa-chevron-left"></i> Github Pages部署Hexo 踩坑记录
+                <a href="/2023/07/05/browserCache/" rel="prev" title="浏览器缓存机制">
+                  <i class="fa fa-chevron-left"></i> 浏览器缓存机制
                 </a>
             </div>
             <div class="post-nav-item">
