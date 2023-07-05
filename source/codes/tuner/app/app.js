@@ -35,7 +35,7 @@ Application.prototype.start = function () {
   swal("Welcome online tuner!").then(function () {
     self.tuner.init();
     self.frequencyData = new Uint8Array(self.tuner.analyser.frequencyBinCount);
-    self.askShortcut();
+    // self.askShortcut();
   });
 
   this.$a4.addEventListener("click", function () {
