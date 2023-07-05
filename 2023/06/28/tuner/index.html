@@ -22,7 +22,7 @@
     <meta name="description" content="原文发布于 CSDN，本文系近期迁移，想看更多欢迎访问 我的 CSDN 主页 本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的博客和源码，用 svelte 重新实现了,最终效果请看 演示 一般用的调音器都是表盘式的，工作原理就是设备听到声音，分析声音的频率，判断出音高之后在屏幕上显示出来，在这个过程中我们可能需要解决这些问题：  获取">
 <meta property="og:type" content="article">
 <meta property="og:title" content="实现一个在线调音器">
-<meta property="og:url" content="https://raezhang0822.github.io/2023/07/05/tuner/index.html">
+<meta property="og:url" content="https://raezhang0822.github.io/2023/06/28/tuner/index.html">
 <meta property="og:site_name" content="Welcome">
 <meta property="og:description" content="原文发布于 CSDN，本文系近期迁移，想看更多欢迎访问 我的 CSDN 主页 本来想做一个网页版的调音器，在网上搜了一下，发现已经有人实现过了，但是自己对这个原理还是很感兴趣，所以参照人家的博客和源码，用 svelte 重新实现了,最终效果请看 演示 一般用的调音器都是表盘式的，工作原理就是设备听到声音，分析声音的频率，判断出音高之后在屏幕上显示出来，在这个过程中我们可能需要解决这些问题：  获取">
 <meta property="og:locale" content="en_US">
@@ -30,18 +30,19 @@
 <meta property="og:image" content="https://raezhang0822.github.io/img/tuner/note.png">
 <meta property="og:image" content="https://raezhang0822.github.io/img/tuner/p.png">
 <meta property="og:image" content="https://raezhang0822.github.io/img/tuner/table.png">
-<meta property="article:published_time" content="2023-07-05T06:54:00.942Z">
-<meta property="article:modified_time" content="2023-07-05T06:54:00.942Z">
+<meta property="article:published_time" content="2023-06-28T16:46:21.000Z">
+<meta property="article:modified_time" content="2023-07-05T07:00:52.315Z">
 <meta property="article:author" content="Rae Zhang">
+<meta property="article:tag" content="小工具">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raezhang0822.github.io/img/tuner/error.png">
 
 
-<link rel="canonical" href="https://raezhang0822.github.io/2023/07/05/tuner/">
+<link rel="canonical" href="https://raezhang0822.github.io/2023/06/28/tuner/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://raezhang0822.github.io/2023/07/05/tuner/","path":"2023/07/05/tuner/","title":"实现一个在线调音器"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://raezhang0822.github.io/2023/06/28/tuner/","path":"2023/06/28/tuner/","title":"实现一个在线调音器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>实现一个在线调音器 | Welcome</title>
@@ -134,7 +135,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -172,7 +173,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/07/05/tuner/">
+    <link itemprop="mainEntityOfPage" href="https://raezhang0822.github.io/2023/06/28/tuner/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -201,7 +202,7 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2023-07-05 06:54:00" itemprop="dateCreated datePublished" datetime="2023-07-05T06:54:00+00:00">2023-07-05</time>
+      <time title="Created: 2023-06-28 16:46:21" itemprop="dateCreated datePublished" datetime="2023-06-28T16:46:21+00:00">2023-06-28</time>
     </span>
 
   
@@ -294,15 +295,21 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B0%8F%E5%B7%A5%E5%85%B7/" rel="tag"># 小工具</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2023/06/16/browserCache/" rel="prev" title="浏览器缓存机制">
+                  <i class="fa fa-chevron-left"></i> 浏览器缓存机制
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/07/05/hexo/" rel="next" title="Github Pages部署Hexo 踩坑记录">
-                  Github Pages部署Hexo 踩坑记录 <i class="fa fa-chevron-right"></i>
+                <a href="/2023/07/05/reactFormRender/" rel="next" title="React前端表单解决方案对比">
+                  React前端表单解决方案对比 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
